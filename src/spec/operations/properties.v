@@ -271,6 +271,7 @@ Proof.
 
   - (* Case: n ~ n.+1 *)
     rewrite /andB liftBinOpCons -/andB /= Bool.andb_true_r !fromNat0.
+    rewrite -/fromNat fromNat0.
     have ->: andB bs (zero n) = (zero n)
       by apply lift_right_zero; apply andbF.
     have ->: getBit [tuple of b :: bs] 0 = b
@@ -758,14 +759,14 @@ Qed.
 
 
 Corollary addIsIterInc n (p:BITS n) m : p +# m = iter m incB p.
-Proof. rewrite /adcB. apply adcIsIterInc. Qed.
+Proof. Transparent adcB. rewrite /adcB. apply adcIsIterInc. Qed.
 
 (*---------------------------------------------------------------------------
     Properties of subtraction
   ---------------------------------------------------------------------------*)
 
 Lemma subB_is_dropmsb_adcB_invB  n (p q: BITS n) : subB p q = dropmsb (adcBmain true p (invB q)).
-Proof. rewrite /dropmsb/sbbB/adcB. simpl (~~false).
+Proof. Transparent sbbB. rewrite /dropmsb/sbbB/adcB. simpl (~~false).
 case (splitmsb (adcBmain true p (invB q))) => //.
 Qed.
 
