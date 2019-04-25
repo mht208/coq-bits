@@ -360,7 +360,7 @@ Qed.
 
 Hint Rewrite toZp_joinmsb0 toZp_dropmsb : ZpHom.
 
-Lemma splitmsbK n : cancel (@splitmsb n) (@joinmsb n).
+Lemma splitmsbK A n : cancel (@splitmsb A n) (@joinmsb A n).
 Proof. induction n.
 + case/tupleP => [b p]. by rewrite (tuple0 p).
 + case/tupleP => [b p]. rewrite /= beheadCons theadCons. specialize (IHn p).
@@ -369,35 +369,35 @@ rewrite beheadCons theadCons.
 rewrite E in IHn. by rewrite IHn.
 Qed.
 
-Lemma joinmsbK n : cancel (@joinmsb n) (@splitmsb n).
+Lemma joinmsbK A n : cancel (@joinmsb A n) (@splitmsb A n).
 Proof. induction n.
 + move => [b p]. by rewrite !(tuple0 p) /= theadCons beheadCons.
 + move => [c p]. case/tupleP: p => [b p].
   by rewrite /= !theadCons !beheadCons IHn.
 Qed.
 
-Corollary dropmsb_joinmsb n b (p:BITS n) : dropmsb (joinmsb (b, p)) = p.
+Corollary dropmsb_joinmsb A n (b : A) (p : n.-tuple A) : dropmsb (joinmsb (b, p)) = p.
 Proof. by rewrite /dropmsb joinmsbK. Qed.
 
-Lemma splitlsbK n : cancel (@splitlsb n) (@joinlsb n).
+Lemma splitlsbK A n : cancel (@splitlsb A n) (@joinlsb A n).
 Proof. case/tupleP => [b p]. by rewrite /splitlsb beheadCons theadCons. Qed.
 
-Lemma joinlsbK n : cancel (@joinlsb n) (@splitlsb n).
+Lemma joinlsbK A n : cancel (@joinlsb A n) (@splitlsb A n).
 Proof. move => [p b]. by rewrite /joinlsb /splitlsb beheadCons theadCons. Qed.
 
 Lemma toNat_joinlsb n (p:BITS n) b : toNat (joinlsb (p, b)) = b + (toNat p).*2.
 Proof. done. Qed.
 
 (* Totally ridiculous proof *)
-Lemma splitmsb_rev n : forall (b: BITS n.+1) hi (lo:BITS n),
+Lemma splitmsb_rev A n : forall (b: (n.+1).-tuple A) hi (lo:n.-tuple A),
    splitmsb b = (hi,lo) -> rev b = hi::rev lo.
 Proof. induction n => b hi lo/=.
 + move => [<- <-] {lo}/=. case/tupleP:b => [b u]//=. by rewrite tuple0/=.
 + move => H.
 specialize (IHn (behead_tuple b) hi).
-destruct (splitmsb (behead_tuple b)).
+destruct (splitmsb (behead_tuple b)) as [hi' lo'].
 injection H => [H1 H2] {H}. rewrite H2 {H2} in IHn.
-specialize (IHn b1 refl_equal). rewrite -H1/=.
+specialize (IHn lo' refl_equal). rewrite -H1/=.
 case/tupleP E: b => [b' u]/=. rewrite E/= in IHn.
 by rewrite 2!rev_cons IHn rcons_cons.
 Qed.

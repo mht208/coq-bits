@@ -69,12 +69,12 @@ Identity Coercion QWORDtoVWORD : QWORD >-> VWORD.
 
 (* Construction *)
 Notation "'nilB'" := (nil_tuple _).
-Definition consB {n} (b:bool) (p: BITS n) : BITS n.+1 := cons_tuple b p.
-Definition joinlsb {n} (pair: BITS n*bool) : BITS n.+1 := cons_tuple pair.2 pair.1.
+Definition consB {A : Type} {n} (b : A) (p : n.-tuple A) : (n.+1).-tuple A := cons_tuple b p.
+Definition joinlsb {A : Type} {n} (pair: n.-tuple A * A) : (n.+1).-tuple A := cons_tuple pair.2 pair.1.
 
 (* Destruction *)
-Definition splitlsb {n} (p: BITS n.+1): BITS n*bool := (behead_tuple p, thead p).
-Definition droplsb {n} (p: BITS n.+1) := (splitlsb p).1.
+Definition splitlsb {A : Type} {n} (p: (n.+1).-tuple A): n.-tuple A * A := (behead_tuple p, thead p).
+Definition droplsb {A : Type} {n} (p: (n.+1).-tuple A) := (splitlsb p).1.
 
 (*---------------------------------------------------------------------------
     Conversion to and from natural numbers.
@@ -169,15 +169,15 @@ Definition zeroTruncate extra {n} (p: BITS (n + extra)) : option (BITS n) :=
 
 (* Special case: split at the most significant bit.
    split 1 n doesn't work because it requires BITS (n+1) not BITS n.+1 *)
-Fixpoint splitmsb {n} : BITS n.+1 -> bool * BITS n :=
+Fixpoint splitmsb {A : Type} {n} : (n.+1).-tuple A -> A * n.-tuple A :=
   if n is _.+1
   then fun p => let (p,b) := splitlsb p in let (c,r) := splitmsb p in (c,joinlsb(r,b))
   else fun p => let (p,b) := splitlsb p in (b,p).
-Definition dropmsb {n} (p: BITS n.+1) := (splitmsb p).2.
+Definition dropmsb {A : Type} {n} (p: (n.+1).-tuple A) := (splitmsb p).2.
 
 (* Extend by one bit at the most significant bit. Again, signExtend 1 n does not work
    because BITS (n+1) is not definitionally equal to BITS n.+1  *)
-Fixpoint joinmsb {n} : bool * BITS n -> BITS n.+1 :=
+Fixpoint joinmsb {A : Type} {n} : A * n.-tuple A -> (n.+1).-tuple A :=
   if n is _.+1
   then fun p => let (hibit, p) := p in
                 let (p,b) := splitlsb p in joinlsb (joinmsb (hibit, p), b)
