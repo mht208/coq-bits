@@ -283,7 +283,7 @@ Proof. induction n => //. rewrite /toNat/=. rewrite /toNat in IHn. by rewrite IH
 Corollary toNat_fromNat0 n : @toNat n #0 = 0.
 Proof. by rewrite fromNat0 toNat_zero. Qed.
 
-Lemma msb_zero n : msb (zero n) = false.
+Lemma msb_zero n : msb (zero (n.+1)) = false.
 Proof. by induction n. Qed.
 
 Lemma toNat_ones_succ n : (toNat (ones n)).+1 = 2^n.

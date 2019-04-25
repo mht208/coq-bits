@@ -16,8 +16,6 @@ Import Prenex Implicits.
     Increment and decrement operations
   ---------------------------------------------------------------------------*)
 
-Notation eta_expand x := (fst x, snd x).
-
 Fixpoint incB {n} : BITS n -> BITS n :=
   if n is n.+1
   then fun p => let (p,b) := eta_expand (splitlsb p) in
@@ -87,7 +85,7 @@ Global Opaque adcB.
 Definition addBovf n (p1 p2: BITS n) :=
   if carry_addB p1 p2 then None else Some (addB p1 p2).
 
-Definition computeOverflow n (arg1 arg2 res: BITS n) :=
+Definition computeOverflow n (arg1 arg2 res: BITS n.+1) :=
   match (msb arg1,msb arg2,msb res) with
   | (true,true,false) | (false,false,true) => true | _ => false
   end.
@@ -157,6 +155,8 @@ Definition shrBn {n} (p: BITS n)(k: nat): BITS n := iter k shrB p.
 
 (* Arithmetic shift right: shift one bit to the right, copy msb *)
 Definition sarB {n} (p: BITS n.+1) := joinmsb (msb p, droplsb p).
+
+Definition sarBn {n} (p : BITS n.+1) (k : nat) : BITS n.+1 := iter k sarB p.
 
 (* Lossless shift left: shift one bit to the left, put 0 in lsb *)
 Definition shlBaux {n} (p: BITS n) : BITS n.+1  := joinlsb (p, false).

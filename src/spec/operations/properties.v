@@ -1385,6 +1385,61 @@ Qed.
 (*---------------------------------------------------------------------------
     Shifts and rotates
   ---------------------------------------------------------------------------*)
+
+Lemma shlBn_shlB_comm :
+  forall w (bs : BITS w) n,
+    shlBn (shlB bs) n = shlB (shlBn bs n).
+Proof.
+  move=> w bs n. elim: n => /=.
+  - reflexivity.
+  - move=> n IH. rewrite IH. reflexivity.
+Qed.
+
+Lemma shlBn_add :
+  forall w (bs : BITS w) n m,
+    shlBn bs (n + m) = shlBn (shlBn bs n) m.
+Proof.
+  move=> w bs. elim => /=.
+  - move=> m. rewrite add0n. reflexivity.
+  - move=> n IHn m. rewrite IHn. rewrite shlBn_shlB_comm. reflexivity.
+Qed.
+
+Lemma shrBn_shrB_comm :
+  forall w (bs : BITS w) n,
+    shrBn (shrB bs) n = shrB (shrBn bs n).
+Proof.
+  move=> w bs n. elim: n => /=.
+  - reflexivity.
+  - move=> n IH. rewrite IH. reflexivity.
+Qed.
+
+Lemma shrBn_add :
+  forall w (bs : BITS w) n m,
+    shrBn bs (n + m) = shrBn (shrBn bs n) m.
+Proof.
+  move=> w bs. elim => /=.
+  - move=> m. rewrite add0n. reflexivity.
+  - move=> n IHn m. rewrite IHn. rewrite shrBn_shrB_comm. reflexivity.
+Qed.
+
+Lemma sarBn_sarB_comm :
+  forall w (bs : BITS w.+1) n,
+    sarBn (sarB bs) n = sarB (sarBn bs n).
+Proof.
+  move=> w bs n. elim: n => /=.
+  - reflexivity.
+  - move=> n IH. rewrite IH. reflexivity.
+Qed.
+
+Lemma sarBn_add :
+  forall w (bs : BITS w.+1) n m,
+    sarBn bs (n + m) = sarBn (sarBn bs n) m.
+Proof.
+  move=> w bs. elim => /=.
+  - move=> m. rewrite add0n. reflexivity.
+  - move=> n IHn m. rewrite IHn. rewrite sarBn_sarB_comm. reflexivity.
+Qed.
+
 Lemma toNat_shrB n : forall (p: BITS n), toNat (shrB p) = (toNat p)./2.
 Proof. destruct n. move => p. by rewrite (tuple0 p).
 case/tupleP => [b p].

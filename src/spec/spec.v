@@ -108,8 +108,17 @@ Definition ones n := copy n true.
   ---------------------------------------------------------------------------*)
 
 (* Most and least significant bits, defaulting to 0 *)
+(*
 Definition msb {n} (b: BITS n) := last false b.
 Definition lsb {n} (b: BITS n) := head false b.
+ *)
+
+Notation eta_expand x := (fst x, snd x).
+
+Definition msb {A : Type} {n} (b: (n.+1).-tuple A) :=
+  let (tl, hd) := eta_expand (splitlsb b) in
+  last hd tl.
+Definition lsb {A : Type} {n} (b: (n.+1).-tuple A) := thead b.
 
 Definition catB {n1 n2} (p1: BITS n1) (p2: BITS n2) : BITS (n2+n1) :=
   cat_tuple p2 p1.
