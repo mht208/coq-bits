@@ -99,7 +99,7 @@ Coercion natAsBYTE := @fromNat _ : nat -> BYTE.
 (*---------------------------------------------------------------------------
     All bits identical
   ---------------------------------------------------------------------------*)
-Definition copy n b : BITS n := nseq_tuple n b.
+Definition copy {A} n (b : A) : n.-tuple A := nseq_tuple n b.
 Definition zero n := copy n false.
 Definition ones n := copy n true.
 
