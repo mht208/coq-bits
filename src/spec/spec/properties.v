@@ -136,7 +136,7 @@ by rewrite toNatCons/= half_bit_double.
 Qed.
 
 Lemma toNatCat m n (p : BITS m) (q: BITS n) : toNat (p ## q) = toNat p * 2^n + toNat q.
-Proof. induction n. rewrite (tuple0 q). by rewrite expn0 muln1.
+Proof. induction n. rewrite (tuple0 q). by rewrite expn0 muln1 addn0.
 case/tupleP: q => [b q].
 unfold "##".  rewrite catCons. rewrite !toNatCons. unfold "##" in IHn.
 rewrite IHn. rewrite expnS. rewrite -!muln2. ring.
