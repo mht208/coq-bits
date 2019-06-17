@@ -1155,6 +1155,57 @@ case E: (q == #0).
   have B:= toNatBounded q. by apply (ltn_trans E2).
 Qed.
 
+Lemma leB_eqVltb :
+  forall {w : nat} (b1 b2 : BITS w), leB b1 b2 = ((b1 == b2) || (ltB b1 b2)).
+Proof.
+  move=> w b1 b2. case Heq: (b1 == b2).
+  - rewrite (eqP Heq) leB_refl. reflexivity.
+  - rewrite leB_nat ltB_nat /=. rewrite leq_eqVlt.
+    have: (toNat b1 == toNat b2 = false).
+    {
+      apply/negP => /eqP H. move/negP: Heq; apply. rewrite (toNat_inj H).
+      exact: eqxx.
+    }
+    move=> -> /=. reflexivity.
+Qed.
+
+Lemma eqb_ltB_gtB_cases :
+  forall {w : nat} (b1 b2 : BITS w), (b1 == b2) || (ltB b1 b2) || (ltB b2 b1).
+Proof.
+  move=> w b1 b2. case Heq: (b1 == b2) => /=; first done.
+  case Hlt: (ltB b1 b2) => /=; first done.
+  rewrite ltBNle in Hlt. move/negPn: Hlt. rewrite leB_eqVltb.
+  rewrite eq_sym in Heq. rewrite Heq /=. by apply.
+Qed.
+
+Lemma ltBnn {w : nat} (b : BITS w) : ~~ ltB b b.
+Proof.
+  rewrite -leBNlt. exact: leB_refl.
+Qed.
+
+Lemma ltB_neqAleB {w : nat} (b1 b2 : BITS w) :
+  ltB b1 b2 = (b1 != b2) && (leB b1 b2).
+Proof.
+  case H: (b1 == b2) => /=.
+  - rewrite (eqP H). apply/idP/negP. exact: ltBnn.
+  - rewrite leB_eqVltb H /=. reflexivity.
+Qed.
+
+Lemma leB_total {w : nat} (b1 b2 : BITS w) : (leB b1 b2) || (leB b2 b1).
+Proof.
+  case H: (leB b1 b2) => /=; first by done. move/idP/negP: H.
+  rewrite -ltBNle. exact: leB_weaken.
+Qed.
+
+Lemma anti_leB {w : nat} : antisymmetric (@leB w).
+Proof.
+  move=> b1 b2. rewrite 2!leB_eqVltb. case H: (b1 == b2) => /=.
+  - by rewrite (eqP H).
+  - rewrite (eq_sym b2 b1) H /=. move/andP=> {H} [H1 H2].
+    move: (ltB_trans H1 H2) => {H1 H2} H. apply: False_ind.
+    apply: (negP (ltBnn b1)). exact: H.
+Qed.
+
 (*---------------------------------------------------------------------------
     Relationship of ltB/leB with addition
   ---------------------------------------------------------------------------*)
