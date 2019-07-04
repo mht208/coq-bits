@@ -121,6 +121,26 @@ Fixpoint ltB {n} : BITS n -> BITS n -> bool :=
                     (ltB q1 q2 || ((q1 == q2) && (~~b1) && b2))
   else fun p1 p2 => false.
 
+(* Check if p1 < p2 by comparison from MSB using splitmsb. *)
+Fixpoint ltB_msb {n} : BITS n -> BITS n -> bool :=
+  if n is n.+1
+  then fun p1 p2 => let (b1, q1) := eta_expand (splitmsb p1) in
+                    let (b2, q2) := eta_expand (splitmsb p2) in
+                    ((~~ b1 && b2) || ((b1 == b2) && ltB_msb q1 q2))
+  else fun p1 p2 => false.
+
+(* Compare two reversed bit-vectors. *)
+Fixpoint ltB_rev' {n} : BITS n -> BITS n -> bool :=
+  if n is n.+1
+  then fun p1 p2 => let (q1, b1) := eta_expand (splitlsb p1) in
+                    let (q2, b2) := eta_expand (splitlsb p2) in
+                    ((~~ b1 && b2) || ((b1 == b2) && ltB_rev' q1 q2))
+  else fun p1 p2 => false.
+
+(* Check if p1 < p2 by comparison from MSB using rev and splitlsb. *)
+Definition ltB_rev {n} (p1 p2 : BITS n) :=
+  ltB_rev' (rev_tuple p1) (rev_tuple p2).
+
 Definition leB {n} (p1 p2: BITS n) := ltB p1 p2 || (p1 == p2).
 
 (*---------------------------------------------------------------------------

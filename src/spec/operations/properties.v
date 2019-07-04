@@ -1012,6 +1012,56 @@ apply bitsEq_nat.
 + rewrite !add0n ltn_double E. by rewrite andbF.
 Qed.
 
+Lemma ltB_msb_nat : forall n (p1 p2: BITS n), ltB_msb p1 p2 = (toNat p1 < toNat p2).
+Proof.
+  elim.
+  - move=> p1 p2. by rewrite (tuple0 p1) (tuple0 p2).
+  - move=> n IH. rewrite /ltB_msb -/ltB_msb. move=> p1 p2.
+    case Hmsb1: (splitmsb p1) => [last1 prefix1].
+    case Hmsb2: (splitmsb p2) => [last2 prefix2]. rewrite /=.
+    move: (toNat_joinmsb last1 prefix1). move: (toNat_joinmsb last2 prefix2).
+    rewrite -Hmsb1 -Hmsb2. rewrite (splitmsbK p1) (splitmsbK p2). move=> -> ->.
+    rewrite (IH prefix1 prefix2)=> {Hmsb1 Hmsb2}. case: last1; case: last2 => /=.
+    + rewrite ltn_add2l. reflexivity.
+    + rewrite mul1n mul0n add0n. rewrite ltnNge. symmetry. apply: negbF.
+      move: (toNatBounded prefix2) => Hlt. move: (ltnW Hlt) => {Hlt} Hle.
+      apply: (leq_trans Hle). exact: leq_addr.
+    + rewrite mul0n add0n mul1n. symmetry. move: (toNatBounded prefix1) => Hlt.
+      rewrite -(ltn_add2r (toNat prefix2)) in Hlt. apply: (leq_ltn_trans _ Hlt).
+      exact: leq_addr.
+    + rewrite mul0n 2!add0n. reflexivity.
+Qed.
+
+Lemma ltB_msb_ltB :
+  forall n (p1 p2 : BITS n), ltB_msb p1 p2 = ltB p1 p2.
+Proof.
+  move=> n p1 p2. rewrite ltB_msb_nat ltB_nat. reflexivity.
+Qed.
+
+Lemma ltB_rev_ltB_msb :
+  forall n (p1 p2: BITS n), ltB_rev p1 p2 = ltB_msb p1 p2.
+Proof.
+  elim.
+  - move=> p1 p2. by rewrite (tuple0 p1) (tuple0 p2).
+  - move=> n IH. rewrite /ltB_rev. rewrite /ltB_rev' -/ltB_rev' /ltB_msb -/ltB_msb.
+    move=> p1 p2 /=.
+    case Hmsb1: (splitmsb p1) => [last1 prefix1].
+    case Hmsb2: (splitmsb p2) => [last2 prefix2].
+    move: (splitmsb_rev Hmsb1) (splitmsb_rev Hmsb2) => Hrev1 Hrev2 /=.
+    have ->: rev_tuple p1 = cons_tuple last1 (rev_tuple prefix1).
+    { apply: val_inj. rewrite /= Hrev1. reflexivity. }
+    have ->: rev_tuple p2 = cons_tuple last2 (rev_tuple prefix2).
+    { apply: val_inj. rewrite /= Hrev2. reflexivity. }
+    rewrite 2!theadCons 2!beheadCons /=. move: (IH prefix1 prefix2).
+    rewrite /ltB_rev. move=> ->. reflexivity.
+Qed.
+
+Lemma ltB_rev_ltB :
+  forall n (p1 p2: BITS n), ltB_rev p1 p2 = ltB p1 p2.
+Proof.
+  move=> n p1 p2. rewrite ltB_rev_ltB_msb ltB_msb_ltB. reflexivity.
+Qed.
+
 Lemma leB_nat n (p1 p2: BITS n) : leB p1 p2 = (toNat p1 <= toNat p2).
 Proof.
 rewrite /leB.
