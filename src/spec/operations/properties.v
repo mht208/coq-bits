@@ -1952,7 +1952,7 @@ Qed.
 
 Lemma modZp_pow m n : inZp (m %% 2 ^ n.+1) = inZp (p' := (Zp_trunc (2^n.+1)).+1) m.
 Proof. apply val_inj. simpl. rewrite prednK.
-rewrite prednK. by rewrite modn_mod. apply expn_gt0.
+rewrite prednK. by rewrite div.modn_mod. apply expn_gt0.
 have P:= pow2_gt1 n.
 rewrite -(ltn_add2r 1). rewrite !addn1 prednK.
 done. apply expn_gt0.

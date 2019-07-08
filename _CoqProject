@@ -1,11 +1,14 @@
 -R src Bits
 src/ssrextra/nat.v
+src/ssrextra/zarith.v
+src/ssrextra/seq.v
 src/ssrextra/tuple.v
 src/bits.v
 src/spec/operations.v
 src/spec/operations/properties.v
 src/spec/spec/properties.v
 src/spec/spec.v
+src/extra.v
 src/extraction/axioms8.v
 src/extraction/axioms16.v
 src/extraction/axioms32.v
