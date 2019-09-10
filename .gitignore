@@ -6,6 +6,7 @@ opam/
 *.glob
 *.v.d
 *.aux
+.coqdeps.d
 
 # * Emacs
 *~
@@ -20,6 +21,8 @@ opam/
 *.cmx
 *.cmxs
 *.cmxa
+src/extraction/*.ml
+src/extraction/*.mli
 
 # ocamlbuild working directory
 _build/
@@ -32,3 +35,4 @@ _build/
 setup.data
 setup.log
 
+Makefile.bak
